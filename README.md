@@ -1,12 +1,12 @@
-# In Game Chat Only
+# In Game Chat
 Desc: In game chat for players.
 
-#prerequests:
+# Prerequests:
 1. Node JS
 2. Local server (xampp/wamp)
 3. Stockadmin database
 
-#Installation:
+# Installation:
 1. Clone repository
 2. Update project by running this command `npm install`
 3. Import chat.sql file into PhpMyAdmin
