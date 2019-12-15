@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Socket Example</title>
+	</head>
+	<body>
+		<h1>Game Chat - UserId: <span id="userId">#USERID</span></h1>
+
+		<form method="post">
+			<input type="text" id="message" />
+			<button type="submit" id="submit">Send Message</button>
+		</form>
+		<hr />
+		<h4>Your messages:</h4>
+		<span id="notifyTyping"></span>
+		<ul id="messages"></ul>
+
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			$(document).ready(function() {
+				// Init variables
+				var socket = io();
+				var user = {
+					gameId: Math.floor(100 + Math.random() * 999)
+				};
+				// Default events
+				socket.on("message", function(data) {
+					user.userId = data.userId;
+					$("#userId").text(data.userId);
+				});
+
+				// Custom events
+				socket.on("testerEvent", function(data) {
+					console.log(data);
+				});
+				socket.on("received", function(data) {
+					$("#messages").append("<li>" + data.message + "</li>");
+				});
+
+				// Typing
+				$("#message").on("keypress", () => {
+					socket.emit("typing", { message: "Someone is typing..." });
+				});
+				$("#message").on("keyup", data => {
+					socket.emit("stopTyping", "");
+				});
+				// Typing : Notify
+				socket.on("notifyTyping", data => {
+					$("#notifyTyping").text(data.message);
+				});
+				// Typing : Submit
+				$("form").submit(function(e) {
+					e.preventDefault();
+					user.message = $("#message").val();
+					socket.emit("send-message", user);
+					$("#message").val("");
+				});
+			});
+		</script>
+	</body>
+</html>
