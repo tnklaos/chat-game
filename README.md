@@ -13,4 +13,4 @@ Desc: In game chat for players.
 3. Run the project by `nodemon server.js`
 4. open browser localhost:3000
 
-Hint: Open multiple browser for multiple session.
+Hint: Open multiple browser tabs for multiple session chat.
