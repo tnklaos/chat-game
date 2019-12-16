@@ -1,25 +1,60 @@
+require("dotenv").config();
 const mysql = require("mysql2");
-const connection = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	database: "db_stockadmin"
-});
+const mysql_import = require("mysql-import");
+const fs = require("fs");
 const chatType = 1;
 
-const dbCreate = data => {
+const dbInit = async () => {
 	try {
-		connection.execute(
-			`INSERT INTO chat(chatType,gameId,userId,userMessage) VALUES(${chatType},${data.gameId},"${data.userId}","${data.message}")`,
-			function(err, results, fields) {
-				console.log(results); // results contains rows returned by server
-				console.log(fields); // fields contains extra meta data about results, if available
-			}
-		);
+		const db = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_DATABASE
+		});
+		db.on("error", function(err) {
+			console.log(
+				"Error:",
+				"Database not connected properly, check .env file for setting up database configuration."
+			);
+		});
+		db.connect(err => {
+			console.log("Success:", "Database connected!");
+		});
+		return db;
 	} catch (e) {
-		console.log(e);
+		throw new Error(e);
 	}
 };
 
+const dbUpdate = async data => {
+	const mydb_importer = mysql_import.config({
+		host: process.env.DB_HOST,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASS,
+		database: process.env.DB_DATABASE,
+		onerror: err => console.log(err.message)
+	});
+	// await mydb_importer.import('mydb.sql');
+	await mydb_importer.import("chat.sql");
+};
+
+const dbCreate = async data => {
+	try {
+		const db = await dbInit();
+		await db.execute(
+			`INSERT INTO chat(chatType,gameId,userId,userMessage) VALUES(${chatType},${data.gameId},"${data.userId}","${data.message}")`,
+			(err, results, fields) => {
+				return results;
+			}
+		);
+	} catch (e) {
+		console.log("Error:", e);
+	}
+};
+
+// Exporting functions.
 module.exports = {
+	dbUpdate,
 	dbCreate
 };

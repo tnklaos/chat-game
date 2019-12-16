@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3000;
 const router = require("./app/routes");
 const user = {};
-const { dbCreate } = require("./controller");
+const { dbCreate, dbUpdate } = require("./controller");
 
 app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
@@ -27,35 +27,40 @@ app.use(bodyParser.json());
 router.routesConfig(app);
 
 // Connection Establishing
-io.on("connection", function(socket) {
-	let randomUserId = Math.random()
-		.toString(36)
-		.substring(7);
-	user[socket.id] = {
-		userId: randomUserId,
-		message: "Gaming Chat: Welcome to the chat."
-	};
-	console.log("A user '" + user[socket.id].userId + "' connected");
-	socket.send(user[socket.id]);
-	socket.emit("testerEvent", "Test emit from server.");
 
-	socket.on("disconnect", function() {
-		console.log("A user disconnected");
-	});
-	// Receiveing Messages
-	socket.on("send-message", function(message) {
-		dbCreate(message);
-		socket.broadcast.emit("received", {
-			message: message.message
+io.on("connection", function(socket) {
+	if (process.argv[2] == "update_database") {
+		dbUpdate();
+	} else {
+		let randomUserId = Math.random()
+			.toString(36)
+			.substring(7);
+		user[socket.id] = {
+			userId: randomUserId,
+			message: "Gaming Chat: Welcome to the chat."
+		};
+		console.log("A user '" + user[socket.id].userId + "' connected");
+		socket.send(user[socket.id]);
+		socket.emit("testerEvent", "Test emit from server.");
+
+		socket.on("disconnect", function() {
+			console.log("A user disconnected");
 		});
-	});
-	// Typing notification
-	socket.on("typing", data => {
-		socket.broadcast.emit("notifyTyping", { message: data.message });
-	});
-	socket.on("stopTyping", () => {
-		socket.broadcast.emit("notifyTyping", { message: "" });
-	});
+		// Receiveing Messages
+		socket.on("send-message", function(message) {
+			dbCreate(message);
+			socket.broadcast.emit("received", {
+				message: message.message
+			});
+		});
+		// Typing notification
+		socket.on("typing", data => {
+			socket.broadcast.emit("notifyTyping", { message: data.message });
+		});
+		socket.on("stopTyping", () => {
+			socket.broadcast.emit("notifyTyping", { message: "" });
+		});
+	}
 });
 
 // Server Output
