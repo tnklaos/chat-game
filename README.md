@@ -11,7 +11,7 @@ Desc: In game chat for players.
 2. Update project by running this command `npm install`.
 3. Set your database configuration to `.env` file.
 4. Update database table by `node server.js update_database`.
-5. Run the project by `nodemon`
+5. Run the project by `npm start`
 6. open browser localhost:3000
 
 Hint: Open multiple browser tabs for multiple session chat.
