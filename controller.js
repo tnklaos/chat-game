@@ -3,15 +3,15 @@ const mysql = require("mysql2");
 const mysql_import = require("mysql-import");
 const fs = require("fs");
 const chatType = 1;
-
+const dbConfig = {
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS,
+	database: process.env.DB_DATABASE
+};
 const dbInit = async () => {
 	try {
-		const db = await mysql.createConnection({
-			host: process.env.DB_HOST,
-			user: process.env.DB_USER,
-			password: process.env.DB_PASS,
-			database: process.env.DB_DATABASE
-		});
+		const db = await mysql.createConnection(dbConfig);
 		db.on("error", function(err) {
 			console.log(
 				"Error:",
@@ -28,13 +28,8 @@ const dbInit = async () => {
 };
 
 const dbUpdate = async data => {
-	const mydb_importer = mysql_import.config({
-		host: process.env.DB_HOST,
-		user: process.env.DB_USER,
-		password: process.env.DB_PASS,
-		database: process.env.DB_DATABASE,
-		onerror: err => console.log(err.message)
-	});
+	let config = Object.assign(dbConfig, { onerror: err => console.log(err.message) });
+	const mydb_importer = mysql_import.config(config);
 	// await mydb_importer.import('mydb.sql');
 	await mydb_importer.import("chat.sql");
 };
