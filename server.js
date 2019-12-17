@@ -64,6 +64,5 @@ io.on("connection", function(socket) {
 });
 
 // Server Output
-http.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
-});
+http.listen(PORT, "0.0.0.0");
+console.log(`Server is running on port ${PORT}`);
