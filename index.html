@@ -57,6 +57,7 @@
 				// Typing : Submit
 				$("form").submit(function(e) {
 					e.preventDefault();
+					user.name = "LSDKFJKD";
 					user.message = $("#message").val();
 					socket.emit("send-message", user);
 					$("#message").val("");

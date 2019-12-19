@@ -39,9 +39,9 @@ const dbCreate = async data => {
 	try {
 		const db = await dbInit();
 		await db.execute(
-			`INSERT INTO chat(chatType,gameId,userId,userMessage) VALUES(${chatType},${
+			`INSERT INTO chat(chatType,gameId,userId,userName,userMessage) VALUES(${chatType},${
 				data.gameId
-			},"${data.userId}",${db.escape(data.message)})`,
+			},"${data.userId}","${data.name}",${db.escape(data.message)})`,
 			(err, results, fields) => {
 				return results;
 			}
