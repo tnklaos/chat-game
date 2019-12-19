@@ -13,6 +13,8 @@
 			<input type="text" id="message" />
 			<button type="submit" id="submit">Send Message</button>
 		</form>
+		<br />
+		<button type="button" id="getAllMessages">Get Messages</button>
 		<hr />
 		<h4>Your messages:</h4>
 		<span id="notifyTyping"></span>
@@ -58,6 +60,13 @@
 					user.message = $("#message").val();
 					socket.emit("send-message", user);
 					$("#message").val("");
+				});
+				$(document).on("click", "#getAllMessages", function() {
+					console.log("clicked.");
+					socket.emit("getAllMessages");
+					socket.on("getAllMessages", data => {
+						console.log(data);
+					});
 				});
 			});
 		</script>

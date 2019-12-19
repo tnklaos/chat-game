@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `chat`
 --
 
-CREATE TABLE `chat` (
+CREATE TABLE IF NOT EXISTS `chat` (
   `chatId` int(11) NOT NULL,
   `chatType` tinyint(4) NOT NULL COMMENT '1=single,2=global',
   `gameId` int(11) NOT NULL DEFAULT 0,
@@ -46,20 +46,19 @@ CREATE TABLE `chat` (
 --
 -- Indexes for table `chat`
 --
-ALTER TABLE `chat`
-  ADD PRIMARY KEY (`chatId`);
+ALTER TABLE `chat` ADD PRIMARY KEY IF NOT EXISTS (`chatId`);
 
---
--- AUTO_INCREMENT for dumped tables
---
 
---
--- AUTO_INCREMENT for table `chat`
---
 ALTER TABLE `chat`
   MODIFY `chatId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
-alter table chat modify column updated_at timestamp null default null on update current_timestamp;
+alter table chat 
+modify column updated_at timestamp null default null on update current_timestamp;
+
+alter table chat 
+add column if not exists userName varchar(20) after userId;
+
+alter table chat drop updated_at;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
