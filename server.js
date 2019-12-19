@@ -3,7 +3,7 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const router = require("./app/routes");
 const user = {};
 const { dbCreate, dbUpdate } = require("./controller");
@@ -47,10 +47,9 @@ io.on("connection", function(socket) {
 	});
 	// Receiveing Messages
 	socket.on("send-message", function(message) {
+		console.log(message);
 		dbCreate(message);
-		socket.broadcast.emit("received", {
-			message: message.message
-		});
+		socket.broadcast.emit("received", message);
 	});
 	// Typing notification
 	socket.on("typing", data => {
