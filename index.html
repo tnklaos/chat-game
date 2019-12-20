@@ -25,6 +25,7 @@
 		<script>
 			$(document).ready(function() {
 				// Init variables
+				// var socket = io.connect( { path: "/chatgame/socket.io" } );
 				var socket = io();
 				var user = {
 					gameId: Math.floor(100 + Math.random() * 999)
@@ -36,10 +37,10 @@
 				});
 
 				// Custom events
-				socket.on("testerEvent", function(data) {
+				socket.on("chat-game", function(data) {
 					console.log(data);
 				});
-				socket.on("received", function(data) {
+				socket.on("new-message-game", function(data) {
 					$("#messages").append("<li>" + data.message + "</li>");
 				});
 
@@ -57,9 +58,11 @@
 				// Typing : Submit
 				$("form").submit(function(e) {
 					e.preventDefault();
-					user.name = "LSDKFJKD";
+					user.gameId = "87238";
+					user.userId = "askdf";
+					user.name = "okay";
 					user.message = $("#message").val();
-					socket.emit("send-message", user);
+					socket.emit("send-message-game", user);
 					$("#message").val("");
 				});
 				$(document).on("click", "#getAllMessages", function() {

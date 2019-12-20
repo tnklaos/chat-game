@@ -40,16 +40,16 @@ io.on("connection", function(socket) {
 	};
 	console.log("A user '" + user[socket.id].userId + "' connected");
 	socket.send(user[socket.id]);
-	socket.emit("testerEvent", "Test emit from server.");
+	socket.emit("chat-game", "Client is connected.");
 
 	socket.on("disconnect", function() {
 		console.log("A user disconnected");
 	});
 	// Receiveing Messages
-	socket.on("send-message", function(message) {
+	socket.on("send-message-game", function(message) {
 		console.log(message);
 		dbCreate(message);
-		socket.broadcast.emit("received", message);
+		socket.emit("new-message-game", message);
 	});
 	// Typing notification
 	socket.on("typing", data => {
